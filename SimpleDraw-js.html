@@ -1,0 +1,113 @@
+<html>
+<body>
+<canvas id="myCanvas" width="500" height="600" style="border:2px solid #000000;">
+</canvas>
+<br/>
+<button onclick="clearButtonHandler()">Clear</button>
+
+<script language="JavaScript">
+
+function keyDownHandler(e) {
+   // e = e || window.event;
+
+   if (e.keyCode == '38') {
+      console.log("Up Arrow");
+   }
+   else if (e.keyCode == '40') {
+      console.log("Down Arrow");
+   }
+   else if (e.keyCode == '37') {
+      console.log("Left Arrow");
+   }
+   else if (e.keyCode == '39') {
+      console.log("Right Arrow");
+   }
+}
+
+document.onkeydown = keyDownHandler;
+
+var canvas = document.getElementById("myCanvas");
+var canvas_context = canvas.getContext("2d");
+var canvas_rectangle = canvas.getBoundingClientRect();
+
+var buttonIsDown = false;
+
+// this is the set of strokes already drawn
+var arrayOfStrokes = [];
+
+// this is the stroke currently being drawn
+var stroke = []; // each stroke is an array of points
+
+function mouseDownHandler(e) {
+   buttonIsDown = true;
+   var event_x = e.clientX - canvas_rectangle.left;
+   var event_y = e.clientY - canvas_rectangle.top;
+   console.log("mouse down");
+   console.log("   " + event_x + "," + event_y);
+   stroke = [];
+}
+function mouseUpHandler(e) {
+   buttonIsDown = false;
+   var event_x = e.clientX - canvas_rectangle.left;
+   var event_y = e.clientY - canvas_rectangle.top;
+   console.log("mouse up");
+
+   if ( stroke.length > 2 ) {
+      arrayOfStrokes.push( stroke );
+   }
+   stroke = [];
+}
+function mouseMoveHandler(e) {
+   var event_x = e.clientX - canvas_rectangle.left;
+   var event_y = e.clientY - canvas_rectangle.top;
+   console.log("mouse move");
+   if ( buttonIsDown ) {
+      stroke.push( { x : event_x, y : event_y } );
+   }
+   redraw();
+}
+
+canvas.addEventListener('mousedown',mouseDownHandler);
+canvas.addEventListener('mouseup',mouseUpHandler);
+canvas.addEventListener('mousemove',mouseMoveHandler);
+
+function drawStroke( s ) {
+   canvas_context.beginPath();
+   for ( var i = 0; i < s.length; ++i ) {
+      var x = s[i].x;
+      var y = s[i].y;
+      if ( i === 0 ) {
+         canvas_context.moveTo(x,y);
+      }
+      else {
+         canvas_context.lineTo(x,y);
+      }
+   }
+   canvas_context.stroke();
+}
+
+var redraw = function() {
+   canvas_context.clearRect(0, 0, canvas.width, canvas.height);
+
+   canvas_context.strokeStyle = "#000000";
+   for ( var i = 0; i < arrayOfStrokes.length; ++i ) {
+      drawStroke( arrayOfStrokes[i] );
+   }
+
+   if ( buttonIsDown ) {
+      canvas_context.strokeStyle = "#ff0000";
+      drawStroke( stroke );
+   }
+}
+
+redraw();
+
+function clearButtonHandler() {
+   arrayOfStrokes = [];
+   redraw();
+}
+
+</script> 
+
+</body>
+</html>
