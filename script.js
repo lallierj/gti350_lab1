@@ -26,25 +26,6 @@ $( document ).ready(function() {
    var selectedStrokes = [];
    var initialSelectX = 0;
    var initialSelectY = 0;
-   //Quand c'est mouse moving et button down
-   //On vide le array rectangle selection
-   //On vide le array selectedStrokes
-   //On ajoute les 4 traits du rectangle selon les coordonnées de début et de fin (dans une autre couleur)
-   //quand on relache
-   //on check dans l'array de strokes, si un stroke a un pixel dans la zone de sélection 
-      //on ajoute le stroke au array selectedStrokes
-      //on garde l'index à enlever
-      //On skip au prochain stroke
-   //À la fin de la boucle, on enlève les strokes du array original
-   //Pour tous les strokes sélectionnés, on ajoute un rectangle autour en
-      //Trouvant le x le plus bas et le plus haut et le y le plus bas et le plus haut et en utilisant ces coordonnées pour faire un rectangle
-
-   //Quand on a des strokes sélectionnés et qu'on est en mode déplacement
-   //Quand on est mouse down et moving
-   //On change les coordonnées de tous les points des strokes sélectionnés selon le mouvement effectué
-
-
-
 
    document.onkeydown = keyDownHandler;
 
@@ -79,10 +60,9 @@ $( document ).ready(function() {
       console.log("   " + event_x + "," + event_y);
       stroke = [];
       symetricStroke = [];
+      //Si on est en mode "Sélectionner" ou "Dessiner"
       if($("input:radio[value=selectionner]").is(":checked") || $("input:radio[value=dessiner]").is(":checked")){
-         for(var i=1; i < selectedStrokes.length; i++){
-            arrayOfStrokes.push(selectedStrokes[i]);
-         }
+         //On vide le tableau de lignes sélectionnées
          selectedStrokes = [];
       }
       if($("input:radio[value=selectionner]").is(":checked")){
@@ -122,6 +102,7 @@ $( document ).ready(function() {
          }
          for(var k=selectedStrokeIndexes.length; k >= 0; k --){
             var index = selectedStrokeIndexes[k];
+            console.log(index);
             selectedStrokes.push(arrayOfStrokes[index]);
          }
       }
@@ -230,7 +211,6 @@ $( document ).ready(function() {
       for ( var i = 0; i < arrayOfStrokes.length; i++ ) {
          drawStroke( arrayOfStrokes[i] );
       }
-
       
       for (var j=1; j < selectedStrokes.length; j++) {
          drawBound(selectedStrokes[j]);
@@ -243,7 +223,7 @@ $( document ).ready(function() {
       canvas_context.strokeStyle = "#dfdfdf";
       drawStroke( middleLine );
 
-      if ( buttonIsDown ) {
+      if ( buttonIsDown && $("input:radio[value=dessiner]").is(":checked")) {
          canvas_context.strokeStyle = "#ff0000";
          drawStroke( stroke );
          drawStroke( symetricStroke );
